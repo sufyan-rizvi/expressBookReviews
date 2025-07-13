@@ -28,11 +28,14 @@ public_users.get("/", function (req, res) {
 // Get book details based on ISBN
 public_users.get("/isbn/:isbn", function (req, res) {
   //Write your code here
-  const isbn = req.params.isbn;
-  if (typeof isbn === "string") isbn = Number(isbn);
-  if (!Object.keys(books).includes(isbn))
-    return res.status(404).json({ message: "Book not found for this ISBN" });
-  const data = books.isbn;
+  let isbn = req.params.isbn;
+
+  if (!books[isbn]) {
+    return res
+      .sendStatus(404)
+      .json({ message: "Book not found for this ISBN" });
+  }
+  const data = books[isbn];
   return res.status(200).json(data);
 });
 
@@ -41,6 +44,7 @@ public_users.get("/author/:author", function (req, res) {
   //Write your code here
   const booksWithoutId = Object.values(books);
   const author = req.params.author;
+
   const data = booksWithoutId.filter((book) => {
     return book.author.toLowerCase() === author.toLowerCase();
   });
@@ -67,11 +71,12 @@ public_users.get("/review/:isbn", function (req, res) {
   let isbn = req.params.isbn;
   if (typeof isbn === "string") isbn = Number(isbn);
 
-  if (!Object.keys(books).includes(isbn))
+  if (!books[isbn])
     return res.status(404).json({ message: "Review not found for this ISBN" });
 
-  const data = books.isbn;
-  const reviews = data.reviews;
+  const data = books[isbn];
+  console.log(data);
+  const reviews = data["reviews"];
   return res.status(200).json(reviews);
 });
 

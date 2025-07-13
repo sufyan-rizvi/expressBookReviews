@@ -19,15 +19,14 @@ app.use(
 
 app.use("/customer/auth/*", function auth(req, res, next) {
   const authHeader = req.headers.authorization;
-  if (authHeader) {
-    const token = authHeader.split(" ")[1];
-    if (!token) return res.sendStatus(401);
 
-    jwt.verify(token, "fingerprint_customer", (err, user) => {
+  if (authHeader) {
+    jwt.verify(authHeader, "fingerprint_customer", (err, user) => {
       if (err) return res.sendStatus(403);
       req.user = user;
       next();
     });
+    console.log(req.user);
   } else {
     res.sendStatus(401); // No Authorization header
   }
